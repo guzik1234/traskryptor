@@ -1,150 +1,124 @@
 import pyaudio
 import win32com.client
-import sys
-import select
 import numpy as np
-import webrtcvad
-import collections
+import keyboard
 from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq
 import torch
+import time
+
+
+def choose_model():
+    print("Wybierz model do transkrypcji:")
+    print("1 — Small (szybszy, mniej dokładny)")
+    print("2 — Medium (wolniejszy, dokładniejszy)")
+    while True:
+        choice = input("Podaj 1 lub 2: ").strip()
+        if choice == "1":
+            return "bardsai/whisper-small-pl"
+        elif choice == "2":
+            return "bardsai/whisper-medium-pl-v2"
+        else:
+            print("Niepoprawny wybór, spróbuj ponownie.")
 
 
 def main():
     print("Initializing...")
 
-    # --- Configure PyTorch CPU Threads ---
     torch.set_num_threads(12)
-    print(f"Set PyTorch CPU threads to: {torch.get_num_threads()}")
 
-    # Load Whisper model
-    model_id = "bardsai/whisper-small-pl"
-    print(f"Loading model '{model_id}' ...")
+    model_id = choose_model()
+    print(f"Ładowanie modelu '{model_id}'...")
 
     try:
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"Using device: {device}")
-
         processor = AutoProcessor.from_pretrained(model_id)
         model = AutoModelForSpeechSeq2Seq.from_pretrained(model_id).to(device)
-
     except Exception as e:
-        print(f"Error loading model: {e}")
+        print("Błąd ładowania modelu:", e)
         return
 
-    # Initialize PyAudio
+    # --- Mikrofon ---
     p = pyaudio.PyAudio()
+    RATE = 16000
+    CHUNK = 1024
+
     stream = p.open(format=pyaudio.paInt16,
                     channels=1,
-                    rate=16000,
+                    rate=RATE,
                     input=True,
-                    frames_per_buffer=1024)
+                    frames_per_buffer=CHUNK)
 
-    # Connect to Word
+    # --- Word ---
     try:
         word = win32com.client.GetActiveObject("Word.Application")
         doc = word.ActiveDocument
     except:
-        print("Error: Word not found.")
+        print("Otwórz Worda przed uruchomieniem skryptu.")
         stream.stop_stream()
         stream.close()
         p.terminate()
         return
 
-    print("Speak now...")
-
-    # --- VAD Setup ---
-    vad = webrtcvad.Vad(3)
-    SAMPLE_RATE = 16000
-    FRAME_MS = 30
-    FRAME_SIZE = int(SAMPLE_RATE * FRAME_MS / 1000)
-    BYTES_PER_FRAME = FRAME_SIZE * 2
-
-    SILENCE_TIMEOUT_MS = 1200
-    MIN_SPEECH_MS = 400
-
-    frames_buffer = collections.deque()
-    speech_frames = []
-    silence_after_speech = 0
-    triggered = False
+    print("READY — wciśnij i trzymaj Lewy Shift, by nagrywać.")
 
     while True:
-        data = stream.read(1024, exception_on_overflow=False)
-        frames_buffer.append(data)
+        keyboard.wait("left shift")
+        print("Nagrywanie... (puść Lewy Shift, by zakończyć)")
 
-        # Build full 30 ms frame for VAD
-        while len(b''.join(frames_buffer)) >= BYTES_PER_FRAME:
-            buf = b''.join(frames_buffer)
-            frame = buf[:BYTES_PER_FRAME]
-            rest = buf[BYTES_PER_FRAME:]
-            frames_buffer.clear()
-            frames_buffer.append(rest)
+        frames = []
+        while keyboard.is_pressed("left shift"):
+            data = stream.read(CHUNK, exception_on_overflow=False)
+            frames.append(data)
 
-            try:
-                is_speech = vad.is_speech(frame, SAMPLE_RATE)
-            except Exception:
-                is_speech = False
+        print("Przetwarzanie nagrania...")
 
-            if triggered:
-                speech_frames.append(frame)
+        if not frames:
+            print("Nie przechwycono dźwięku.")
+            continue
 
-                if not is_speech:
-                    silence_after_speech += 1
-                    if silence_after_speech * FRAME_MS > SILENCE_TIMEOUT_MS:
-                        # End of phrase
-                        audio = b''.join(speech_frames)
-                        duration_ms = len(audio) / (SAMPLE_RATE * 2) * 1000
+        # --- Audio processing ---
+        audio_bytes = b"".join(frames)
+        audio_np = np.frombuffer(audio_bytes, dtype=np.int16).astype(np.float32)
+        BOOST = 1.8
+        audio_np *= BOOST
+        audio_np = np.clip(audio_np, -32768, 32767)
+        audio_np /= 32768.0
 
-                        triggered = False
-                        speech_frames = []
-                        silence_after_speech = 0
+        # --- Transcription ---
+        try:
+            inputs = processor(audio_np, sampling_rate=RATE, return_tensors="pt").to(device)
 
-                        if duration_ms >= MIN_SPEECH_MS:
-                            print(f"Transcribing ({duration_ms:.0f} ms)...")
-                            audio_np = np.frombuffer(audio, dtype=np.int16).astype(np.float32) / 32768.0
+            gen_cfg = model.generation_config
+            gen_cfg.suppress_tokens = []
+            gen_cfg.begin_suppress_tokens = [220, 50257]
+            gen_cfg.forced_decoder_ids = None
+            gen_cfg.forced_bos_token_id = None
+            gen_cfg.forced_eos_token_id = None
+            gen_cfg.pad_token_id = processor.tokenizer.eos_token_id
 
-                            try:
-                                inputs = processor(audio_np, sampling_rate=SAMPLE_RATE,
-                                                   return_tensors="pt").to(device)
+            inputs["attention_mask"] = torch.ones(
+                (inputs["input_features"].shape[0], inputs["input_features"].shape[2]),
+                dtype=torch.long
+            ).to(device)
 
-                                generated_ids = model.generate(
-                                    **inputs,
-                                    max_new_tokens=128
-                                )
+            generated_ids = model.generate(
+                **inputs,
+                generation_config=gen_cfg,
+                max_new_tokens=256
+            )
 
-                                text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-                                print("Result:", text)
+            text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+            print("Transkrypcja:", text)
 
-                            except Exception as e:
-                                print("Transcription error:", e)
-                                text = ""
+        except Exception as e:
+            print("Błąd transkrypcji: ", e)
+            text = ""
 
-                            if text:
-                                word.Selection.InsertAfter(text + " ")
-                                word.Selection.MoveRight()
+        if text:
+            word.Selection.InsertAfter(text)
+            word.Selection.MoveRight()
 
-                else:
-                    silence_after_speech = 0
-
-            else:
-                if is_speech:
-                    print("Speech detected.")
-                    triggered = True
-                    speech_frames.append(frame)
-
-        # Allow exit via console
-        if sys.stdin.isatty():
-            try:
-                ready, _, _ = select.select([sys.stdin], [], [], 0)
-                if ready:
-                    if sys.stdin.readline().strip().lower() == "exit":
-                        break
-            except:
-                pass
-
-    print("Exiting...")
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
