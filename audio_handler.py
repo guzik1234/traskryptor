@@ -42,3 +42,4 @@ class AudioHandler:
             self.stream.close()
         if self.p:
             self.p.terminate()
+
