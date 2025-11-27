@@ -54,9 +54,11 @@ class TranslationGUI:
         self.target_lang = tk.StringVar(value="en")
         
         tk.Radiobutton(lang_frame, text="Angielski", variable=self.target_lang, 
-                      value="en", font=("Arial", 11)).pack(anchor='w', padx=20, pady=3)
+                  value="en", font=("Arial", 11)).pack(anchor='w', padx=20, pady=3)
         tk.Radiobutton(lang_frame, text="Rosyjski", variable=self.target_lang, 
-                      value="ru", font=("Arial", 11)).pack(anchor='w', padx=20, pady=3)
+                  value="ru", font=("Arial", 11)).pack(anchor='w', padx=20, pady=3)
+        tk.Radiobutton(lang_frame, text="Ukraiński", variable=self.target_lang, 
+                  value="uk", font=("Arial", 11)).pack(anchor='w', padx=20, pady=3)
         
         # Tryb tłumaczenia (tylko Word)
         self.translation_mode = tk.StringVar(value="word")
@@ -105,7 +107,9 @@ class TranslationGUI:
             
             # Przygotuj nazwy plików wyjściowych (PDF i DOCX)
             base_name = os.path.splitext(filename)[0]
-            lang_suffix = "_en" if self.target_lang.get() == "en" else "_ru"
+            # Dobierz sufiks na podstawie języka docelowego
+            lang_map = {"en": "_en", "ru": "_ru", "uk": "_uk"}
+            lang_suffix = lang_map.get(self.target_lang.get(), "_en")
             self.output_file_pdf = f"{base_name}{lang_suffix}.pdf"
             self.output_file_docx = f"{base_name}{lang_suffix}.docx"
             
