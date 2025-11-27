@@ -19,7 +19,9 @@ def install_language_packages():
     # Pakiety do zainstalowania
     to_install = [
         ("pl", "en"),  # Polski -> Angielski
+        ("en", "pl"),  # Angielski -> Polski
         ("pl", "ru"),  # Polski -> Rosyjski
+        ("pl", "uk"),  # Polski -> Ukraiński
     ]
     
     for source, target in to_install:

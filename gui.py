@@ -66,12 +66,20 @@ class TranscriptionGUI:
         tk.Label(self.translate_lang_frame, text="Przetłumacz na:", font=("Arial", 11)).pack(anchor='w', padx=70, pady=(5, 0))
         
         self.translate_lang_var = tk.StringVar(value="en")
-        tk.Radiobutton(self.translate_lang_frame, text="Angielski", variable=self.translate_lang_var, 
+        
+        # Opcje dla polskiego źródła (PL → EN/RU/UK)
+        self.pl_translate_options = tk.Frame(self.translate_lang_frame)
+        tk.Radiobutton(self.pl_translate_options, text="Angielski", variable=self.translate_lang_var, 
                       value="en", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
-        tk.Radiobutton(self.translate_lang_frame, text="Rosyjski", variable=self.translate_lang_var, 
+        tk.Radiobutton(self.pl_translate_options, text="Rosyjski", variable=self.translate_lang_var, 
                       value="ru", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
-        tk.Radiobutton(self.translate_lang_frame, text="Ukraiński", variable=self.translate_lang_var, 
+        tk.Radiobutton(self.pl_translate_options, text="Ukraiński", variable=self.translate_lang_var, 
                       value="uk", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
+        
+        # Opcje dla angielskiego źródła (EN → PL)
+        self.en_translate_options = tk.Frame(self.translate_lang_frame)
+        tk.Radiobutton(self.en_translate_options, text="Polski", variable=self.translate_lang_var, 
+                      value="pl", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
         
         # Przyciski - zawsze na dole
         self.button_frame = tk.Frame(self.root)
@@ -104,11 +112,29 @@ class TranscriptionGUI:
             self.model_frame.pack(after=self.lang_frame, pady=10)
         else:
             self.model_frame.pack_forget()
+        
+        # Aktualizuj opcje tłumaczenia gdy zmienia się język
+        self.update_translate_options()
     
     def update_translate_options(self):
-        """Pokazuje/ukrywa opcje języka tłumaczenia"""
+        """Pokazuje/ukrywa opcje języka tłumaczenia w zależności od języka źródłowego"""
         if self.translate_var.get():
             self.translate_lang_frame.pack(pady=5)
+            
+            # Pokaż odpowiednie opcje w zależności od wybranego języka transkrypcji
+            if self.lang_var.get() == "polski":
+                # Polski → EN/RU/UK
+                self.en_translate_options.pack_forget()
+                self.pl_translate_options.pack()
+                # Ustaw domyślnie angielski jeśli był polski
+                if self.translate_lang_var.get() == "pl":
+                    self.translate_lang_var.set("en")
+            else:
+                # Angielski → PL
+                self.pl_translate_options.pack_forget()
+                self.en_translate_options.pack()
+                # Ustaw polski dla angielskiego
+                self.translate_lang_var.set("pl")
         else:
             self.translate_lang_frame.pack_forget()
     

@@ -55,27 +55,36 @@ class TranscriptionModel:
             text = " ".join([s.text for s in segments]).strip()
         else:
             # Polski - transformers
-            inputs = self.processor(audio_np, sampling_rate=rate, return_tensors="pt").to(self.device)
-            
-            gen_cfg = self.model.generation_config
-            gen_cfg.suppress_tokens = []
-            gen_cfg.begin_suppress_tokens = [220, 50257]
-            gen_cfg.forced_decoder_ids = None
-            gen_cfg.forced_bos_token_id = None
-            gen_cfg.forced_eos_token_id = None
-            gen_cfg.pad_token_id = self.processor.tokenizer.eos_token_id
-            
-            inputs["attention_mask"] = torch.ones(
-                (inputs["input_features"].shape[0], inputs["input_features"].shape[2]),
-                dtype=torch.long
+            # Przetwórz audio
+            inputs = self.processor(
+                audio_np, 
+                sampling_rate=rate, 
+                return_tensors="pt"
             ).to(self.device)
             
-            generated_ids = self.model.generate(
-                **inputs,
-                generation_config=gen_cfg,
-                max_new_tokens=256
+            # Przygotuj forced_decoder_ids dla polskiego
+            forced_decoder_ids = self.processor.get_decoder_prompt_ids(
+                language="polish", 
+                task="transcribe"
             )
             
-            text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+            # Napraw generation_config - usuń suppress_tokens który powoduje błąd
+            gen_config = self.model.generation_config
+            gen_config.suppress_tokens = None  # Wyłącz suppress_tokens
+            
+            # Generuj transkrypcję
+            with torch.no_grad():
+                generated_ids = self.model.generate(
+                    inputs["input_features"],
+                    generation_config=gen_config,
+                    forced_decoder_ids=forced_decoder_ids,
+                    max_length=448
+                )
+            
+            # Dekoduj
+            text = self.processor.batch_decode(
+                generated_ids, 
+                skip_special_tokens=True
+            )[0].strip()
         
         return text

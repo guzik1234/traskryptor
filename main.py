@@ -50,7 +50,7 @@ class MainApp:
         # Przycisk tłumaczenia
         translation_btn = tk.Button(
             button_frame,
-            text="🌍 Tłumaczenie PDF\n(Polski → Angielski/Rosyjski)",
+            text="🌍 Tłumaczenie PDF\n(Polski → Angielski/Rosyjski/Ukraiński)",
             command=self.open_translation,
             font=("Arial", 13, "bold"),
             bg="#2196F3",
