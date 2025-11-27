@@ -1,4 +1,4 @@
-import tkinter as tk
+ï»¿import tkinter as tk
 import threading
 
 
@@ -8,7 +8,7 @@ class TranscriptionGUI:
     def __init__(self, on_start_callback, on_stop_callback):
         self.root = tk.Tk()
         self.root.title("Transkrypcja mowy do tekstu")
-        self.root.geometry("600x650")
+        self.root.geometry("700x900")
         self.root.resizable(False, False)
         
         self.on_start_callback = on_start_callback
@@ -86,7 +86,7 @@ class TranscriptionGUI:
                  font=("Arial", 14, "bold"), bg="#f44336", fg="white", 
                  width=22, height=2, state="disabled")
         self.stop_button.pack(pady=5, fill='x')
-        # Dodatkowa pusta przestrzeñ pod przyciskami (100px)
+        # Dodatkowa pusta przestrzeï¿½ pod przyciskami (100px)
         self.bottom_spacer = tk.Frame(self.button_frame, height=200)
         self.bottom_spacer.pack(fill='x')
         self.bottom_spacer.pack_propagate(False)
