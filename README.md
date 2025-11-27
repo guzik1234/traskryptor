@@ -33,27 +33,26 @@ Aplikacja do transkrypcji mowy na tekst oraz tłumaczenia dokumentów PDF.
 
 ## Wymagania
 
+### Instalacja zależności
 ```bash
-pip install pyaudio numpy keyboard transformers torch faster-whisper pywin32 pymupdf deep-translator
+pip install -r requirements.txt
 ```
 
-**Biblioteki:**
+**Biblioteki (kluczowe):**
 - Python 3.8+ (testowane na 3.13)
-- PyAudio (nagrywanie audio)
-- NumPy (przetwarzanie danych)
-- Keyboard (obsługa klawiatury)
-- Transformers (modele AI)
-- PyTorch (backend AI)
-- Faster Whisper (transkrypcja angielska)
-- pywin32 (integracja z Word, automatyzacja COM)
-- PyMuPDF/fitz (obsługa PDF)
-- deep-translator (tłumaczenie ONLINE przez Google Translate API)
+- SoundDevice (nagrywanie audio, zamiennik PyAudio na Windows)
+- NumPy
+- Keyboard
+- Faster Whisper / OpenAI Whisper (transkrypcja)
+- PyTorch
+- Transformers, SentencePiece, ArgosTranslate (tłumaczenie offline)
+- pywin32 (Word COM)
 - **Microsoft Word** (wymagane dla tłumaczenia dokumentów)
 
-**Ważne:** 
-- Transkrypcja: pobiera modele przy pierwszym użyciu (później działa offline)
-- Tłumaczenie: **wymaga połączenia z internetem** (Google Translate API)
-- Tłumaczenie: **wymaga zainstalowanego Microsoft Word**
+**Ważne:**
+- Transkrypcja: modele pobierają się przy pierwszym użyciu (offline później)
+- Na Windows zalecane: uruchom PowerShell jako administrator lub włącz Developer Mode (lepszy cache HF bez ostrzeżeń o symlinkach).
+- Tłumaczenie dokumentów Word/PDF wymaga zainstalowanego Microsoft Word.
 
 ## Uruchomienie
 
