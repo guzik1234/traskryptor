@@ -1,0 +1,11 @@
+sounddevice==0.5.3
+SpeechRecognition==3.14.4
+openai-whisper==20250625
+faster-whisper==1.2.1
+keyboard==0.13.5
+pywin32==306
+numpy==2.3.3
+torch==2.9.1
+transformers==4.45.1
+sentencepiece==0.2.0
+argostranslate==1.9.6
