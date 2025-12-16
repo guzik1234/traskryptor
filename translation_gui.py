@@ -1,4 +1,4 @@
-import tkinter as tk
+﻿import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
 import os
@@ -88,6 +88,13 @@ class TranslationGUI:
                           fg="white", height=2,
                           cursor="hand2")
         self.translate_button.pack(pady=10)
+        
+        # Przycisk powrotu do menu
+        self.back_button = tk.Button(bottom_bar, text=" Powrót do menu", 
+                          command=self._on_back_clicked,
+                          font=("Arial", 11), bg="#FF9800", 
+                          fg="white", height=1)
+        self.back_button.pack(pady=5)
         
         # Status
         self.status_label = tk.Label(self.root, text="Wybierz plik PDF do przetłumaczenia", 
@@ -197,6 +204,15 @@ class TranslationGUI:
             self.root.after(0, lambda: self.progress_label.config(text=""))
             self.is_translating = False
     
+    def _on_back_clicked(self):
+        """Obsługa kliknięcia przycisku Powrót"""
+        self.root.destroy()
+        from main import MainApp
+        app = MainApp()
+        app.run()
+    
     def run(self):
         """Uruchamia GUI"""
         self.root.mainloop()
+
+

@@ -13,8 +13,8 @@ def run_transcription(gui):
     word = None
     
     try:
-        # Ładowanie modelu
-        model = TranscriptionModel(gui.selected_language, gui.selected_model)
+        # Ładowanie modelu (używamy domyślnego modelu "1")
+        model = TranscriptionModel(gui.selected_language, "1")
         
         # Inicjalizacja audio
         audio = AudioHandler()

@@ -15,7 +15,6 @@ class TranscriptionGUI:
         self.on_stop_callback = on_stop_callback
         
         self.selected_language = None
-        self.selected_model = None
         self.is_running = False
         self.should_stop = False
         self.translate_enabled = False
@@ -34,20 +33,9 @@ class TranscriptionGUI:
         
         self.lang_var = tk.StringVar(value="polski")
         tk.Radiobutton(self.lang_frame, text="Polski", variable=self.lang_var, value="polski", 
-                      font=("Arial", 13), command=self.update_model_options).pack(anchor='w', padx=50, pady=5)
+                      font=("Arial", 13)).pack(anchor='w', padx=50, pady=5)
         tk.Radiobutton(self.lang_frame, text="Angielski", variable=self.lang_var, value="angielski",
-                      font=("Arial", 13), command=self.update_model_options).pack(anchor='w', padx=50, pady=5)
-        
-        # Model (widoczny tylko dla polskiego)
-        self.model_frame = tk.Frame(self.root)
-        
-        tk.Label(self.model_frame, text="Wybierz model:", font=("Arial", 14, "bold")).pack(pady=(10, 5))
-        
-        self.model_var = tk.StringVar(value="1")
-        tk.Radiobutton(self.model_frame, text="Model 1 (Small - szybszy)", 
-                      variable=self.model_var, value="1", font=("Arial", 13)).pack(anchor='w', padx=50, pady=5)
-        tk.Radiobutton(self.model_frame, text="Model 2 (Medium - dokładniejszy)", 
-                      variable=self.model_var, value="2", font=("Arial", 13)).pack(anchor='w', padx=50, pady=5)
+                      font=("Arial", 13)).pack(anchor='w', padx=50, pady=5)
         
         # Opcja tłumaczenia
         self.translate_frame = tk.Frame(self.root)
@@ -77,6 +65,7 @@ class TranscriptionGUI:
         self.button_frame = tk.Frame(self.root)
         self.button_frame.pack(side=tk.BOTTOM, pady=20)
         
+        
         self.start_button = tk.Button(self.button_frame, text="Start", command=self._on_start_clicked, 
                  font=("Arial", 14, "bold"), bg="#4CAF50", fg="white", 
                  width=22, height=2)
@@ -86,24 +75,23 @@ class TranscriptionGUI:
                  font=("Arial", 14, "bold"), bg="#f44336", fg="white", 
                  width=22, height=2, state="disabled")
         self.stop_button.pack(pady=5, fill='x')
-        # Dodatkowa pusta przestrze� pod przyciskami (100px)
+
+        self.back_button = tk.Button(self.button_frame, text="Powrót do menu", 
+                          command=self._on_back_clicked,
+                          font=("Arial", 11), bg="#FF9800", 
+                          fg="white", width=22, height=1)
+        self.back_button.pack(pady=10, fill='x')
+        
+        # Dodatkowa pusta przestrzeń pod przyciskami (100px)
         self.bottom_spacer = tk.Frame(self.button_frame, height=200)
         self.bottom_spacer.pack(fill='x')
         self.bottom_spacer.pack_propagate(False)
-        
+
+    
         # Status - nad przyciskami
         self.status_label = tk.Label(self.root, text="Wybierz opcje i naciśnij Start", 
                                      font=("Arial", 11), fg="gray")
         self.status_label.pack(side=tk.BOTTOM, pady=(0, 10))
-        
-        self.update_model_options()
-        
-    def update_model_options(self):
-        """Pokazuje/ukrywa opcje wyboru modelu w zależności od języka"""
-        if self.lang_var.get() == "polski":
-            self.model_frame.pack(after=self.lang_frame, pady=10)
-        else:
-            self.model_frame.pack_forget()
     
     def update_translate_options(self):
         """Pokazuje/ukrywa opcje języka tłumaczenia"""
@@ -115,7 +103,6 @@ class TranscriptionGUI:
     def _on_start_clicked(self):
         """Obsługa kliknięcia przycisku Start"""
         self.selected_language = self.lang_var.get()
-        self.selected_model = self.model_var.get() if self.selected_language == "polski" else None
         self.translate_enabled = self.translate_var.get()
         self.translate_lang = self.translate_lang_var.get() if self.translate_enabled else None
         self.is_running = True
@@ -132,6 +119,13 @@ class TranscriptionGUI:
         # Uruchom transkrypcję w osobnym wątku
         transcription_thread = threading.Thread(target=self.on_start_callback, args=(self,), daemon=True)
         transcription_thread.start()
+    
+    def _on_back_clicked(self):
+        """Obsługa kliknięcia przycisku Powrót"""
+        self.root.destroy()
+        from main import MainApp
+        app = MainApp()
+        app.run()
     
     def _on_stop_clicked(self):
         """Obsługa kliknięcia przycisku Stop"""
@@ -152,7 +146,15 @@ class TranscriptionGUI:
         """Włącza przyciski po błędzie"""
         self.root.after(0, lambda: self.start_button.config(state="normal"))
         self.root.after(0, lambda: self.stop_button.config(state="disabled"))
+    def _on_back_clicked(self):
+        """Obsługa kliknięcia przycisku Powrót"""
+        self.root.destroy()
+        from main import MainApp
+        app = MainApp()
+        app.run()
     
     def run(self):
         """Uruchamia główną pętlę GUI"""
         self.root.mainloop()
+
+
