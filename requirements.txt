@@ -1,11 +1,27 @@
+# Audio handling
 sounddevice==0.5.3
+librosa
+
+# Speech recognition
 SpeechRecognition==3.14.4
-openai-whisper==20250625
+openai-whisper
 faster-whisper==1.2.1
+
+# Input handling
 keyboard==0.13.5
-pywin32==306
-numpy==2.3.3
-torch==2.9.1
-transformers==4.45.1
-sentencepiece==0.2.0
+
+# Windows COM automation
+pywin32==311
+
+# AI/ML
+numpy
+torch
+transformers
+sentencepiece
+
+# Translation (offline capable)
 argostranslate==1.9.6
+
+# Document handling
+python-docx
+docx2pdf
