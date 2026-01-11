@@ -5,16 +5,24 @@ from gui import TranscriptionGUI
 from audio_handler import AudioHandler
 from transcription_model import TranscriptionModel
 from word_handler import WordHandler
+from pdf_translator import PDFTranslator
 
 
 def run_transcription(gui):
     """Główna funkcja transkrypcji uruchamiana w osobnym wątku"""
     audio = None
     word = None
+    translator = None
     
     try:
         # Ładowanie modelu (używamy domyślnego modelu "1")
         model = TranscriptionModel(gui.selected_language, "1")
+        
+        # Inicjalizacja tłumacza jeśli włączone
+        if gui.translate_enabled and gui.translate_lang:
+            source_lang = "pl" if gui.selected_language == "polski" else "en"
+            translator = PDFTranslator(source_lang=source_lang, target_lang=gui.translate_lang)
+            print(f"Translator włączony: {source_lang} -> {gui.translate_lang}")
         
         # Inicjalizacja audio
         audio = AudioHandler()
@@ -30,7 +38,10 @@ def run_transcription(gui):
                 audio.stop()
             return
         
-        gui.update_status("Nasłuchiwanie aktywne...", "green")
+        status_msg = "Nasłuchiwanie aktywne..."
+        if translator:
+            status_msg += f" (tłumaczenie na {gui.translate_lang.upper()})"
+        gui.update_status(status_msg, "green")
         print("READY — wciśnij i trzymaj Lewy Shift, by nagrywać.")
         
         # Główna pętla nasłuchiwania
@@ -52,7 +63,14 @@ def run_transcription(gui):
                         
                         if text:
                             print("Transkrypcja:", text)
-                            word.insert_text(text)
+                            
+                            # Tłumacz tekst jeśli włączone
+                            if translator:
+                                translated = translator.translate_text(text)
+                                print("Tłumaczenie:", translated)
+                                word.insert_text(translated)
+                            else:
+                                word.insert_text(text)
                     except Exception as e:
                         print("Błąd transkrypcji:", e)
             
