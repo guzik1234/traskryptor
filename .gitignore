@@ -1,6 +1,9 @@
 # Bundle - zbyt duży dla GitHub (~1 GB)
 Traskryptor_WinPython/
 
+# ZIP bundles - uploaduj do GitHub Releases
+*.zip
+
 # Stare bundle'i
 Traskryptor_Portable/
 Traskryptor_Final/
