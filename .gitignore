@@ -1,0 +1,38 @@
+# Bundle - zbyt duży dla GitHub (~1 GB)
+Traskryptor_WinPython/
+
+# Stare bundle'i
+Traskryptor_Portable/
+Traskryptor_Final/
+Traskryptor_FINAL_READY/
+Traskryptor_Gotowa_Paczka/
+Traskryptor_Portable_Final/
+
+# Foldery buildu
+build/
+dist/
+dist_portable/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Tymczasowe
+temp_winpython_extract/
+gdgdf/
+TEST_ZIP/
+
+# Spec pliki
+traskryptor_standalone.spec
+
+# Stare wersje
+*.whl
+python-*.zip
