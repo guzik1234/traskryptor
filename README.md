@@ -1,164 +1,234 @@
-# Transkrypcja i Tłumaczenie
+# 🎤 Traskryptor - Transkrypcja i Tłumaczenie Offline
 
-Aplikacja do transkrypcji mowy na tekst oraz tłumaczenia dokumentów.
+Uniwersalna aplikacja do transkrypcji mowy na tekst oraz tłumaczenia dokumentów **całkowicie offline**.
 
-## Funkcje
+## 🌟 Główne cechy
 
-### 1. Transkrypcja z pliku audio
-- Transkrypcja plików audio (MP3, WAV, M4A, FLAC, OGG) do DOCX i PDF
-- Wsparcie dla języka polskiego i angielskiego
-- Automatyczny eksport do dokumentów Word i PDF
-- **Działa offline** po pobraniu modeli
+- ✅ **100% Offline** - brak wymagań internetu po pobraniu modeli
+- ✅ **Trzy funkcje:** transkrypcja pliku, transkrypcja na żywo, tłumaczenie dokumentów
+- ✅ **Tłumaczenie offline** - translate library (bez PyTorch, bez zależności od sieci)
+- ✅ **Przenośny bundle** - Python 3.13 + wszystkie zależności (1 GB, kompresja 366 MB)
+- ✅ **Wielojęzyczność** - PL, EN, RU, UK
 
-### 2. Transkrypcja na żywo
-- Transkrypcja na żywo z mikrofonu do Microsoft Word
-- Wsparcie dla języka polskiego i angielskiego
-- Opcjonalne automatyczne tłumaczenie (na angielski, rosyjski, ukraiński)
-- Aktywacja nagrywania przez Lewy Shift
-- **Działa offline** po pobraniu modeli (tłumaczenie wymaga internetu)
+---
 
-### 3. Tłumaczenie dokumentów Word/ODT
-- Tłumaczenie z polskiego na angielski, rosyjski lub ukraiński
-- **Obsługa formatów:** DOCX, ODT
-- Zachowanie formatowania, układu i czcionek
-- Eksport do DOCX + PDF
-- **Wymaga:** Microsoft Word (używa automatyzacji COM)
-- **Wymaga:** połączenie z internetem (ArgosTranslate)
+## 📦 Szybki start
 
-## Struktura projektu
+### Opcja 1: Bundle (REKOMENDOWANE) ⭐
 
-### Główne pliki
-- **main.py** - Główne menu aplikacji
+**Najłatwiej!** Pobierz gotowy bundle ze wszystkim wbudowanym:
 
-### Transkrypcja z pliku audio
-- **audio_file_transcription.py** - GUI i logika transkrypcji z pliku
-- **transcription_model.py** - Modele transkrypcji (polski/angielski)
+1. Pobierz: [Traskryptor_WinPython_v1.1.zip (366 MB)](https://github.com/guzik1234/traskryptor/releases)
+2. Rozpakuj folder
+3. Uruchom `Traskryptor.exe`
+4. Gotowe! 🎉 Działa 100% offline
 
-### Transkrypcja na żywo
-- **speech_to_word.py** - Logika transkrypcji na żywo
-- **gui.py** - Interfejs graficzny transkrypcji na żywo
-- **audio_handler.py** - Obsługa nagrywania z mikrofonu
-- **word_handler.py** - Integracja z Microsoft Word
-
-### Tłumaczenie
-- **translation_gui.py** - Interfejs graficzny tłumaczenia
-- **pdf_translator.py** - Logika tłumaczenia dokumentów
-
-## Wymagania
+### Opcja 2: Instalacja ręczna
 
 ```bash
-pip install -r requirements.txt
-```
-
-**Biblioteki:**
-- Python 3.8+ (testowane na 3.13)
-- sounddevice (nagrywanie audio)
-- SpeechRecognition (rozpoznawanie mowy)
-- NumPy (przetwarzanie danych)
-- Keyboard (obsługa klawiatury)
-- Transformers (modele AI)
-- PyTorch (backend AI)
-- openai-whisper (transkrypcja)
-- faster-whisper (transkrypcja angielska)
-- pywin32 (integracja z Word, automatyzacja COM)
-- librosa (wczytywanie plików audio)
-- python-docx (tworzenie dokumentów Word)
-- docx2pdf (konwersja DOCX do PDF)
-- argostranslate (tłumaczenie OFFLINE)
-- seInstalacja
-```bash
-# Utwórz środowisko wirtualne
+# Utwórz środowisko
 python -m venv .venv
-.venv\Scripts\activate  # Windows
+.venv\Scripts\activate
 
 # Zainstaluj zależności
 pip install -r requirements.txt
-```
 
-### Główne menu (wszystkie funkcje)
-```bash
+# Uruchom aplikację
 python main.py
 ```
 
-### 1. Transkrypcja z pliku audio
-1. Z menu głównego wybierz "Transkrypcja z pliku audio"
-2. Kliknij "Wybierz plik audio" i wskaż plik (MP3, WAV, M4A, FLAC, OGG)
-3. Wybierz język (Polski/Angielski)
-4. Kliknij "Rozpocznij transkrypcję"
-5. Poczekaj na zakończenie
-6. Pliki DOCX i PDF zostaną zapisane obok pliku źródłowego
+---
 
-### 2. Transkrypcja na żywo
-1. Z menu głównego wybierz "Transkrypcja na żywo"
-2. Instalacja pakietów językowych dla tłumaczenia (offline)
+## 📋 Funkcje
 
-Aby tłumaczenie działało offline, pobierz pakiety językowe:
+### 1️⃣ Transkrypcja z pliku audio
+
+Konwertuj audio na tekst w kilka sekund.
+
+- **Formaty:** MP3, WAV, M4A, FLAC, OGG
+- **Języki:** Polski, Angielski
+- **Wyjście:** DOCX + PDF
+- **Czy offline?** ✅ Tak
+
+**Jak użyć:**
+1. Wybierz "Transkrypcja z pliku audio"
+2. Zaznacz plik audio
+3. Wybierz język
+4. Kliknij "Start"
+5. Czekaj na wynik (DOCX + PDF)
+
+---
+
+### 2️⃣ Transkrypcja na żywo
+
+Nagrywaj i transkrybuj mowę w Microsoft Word w czasie rzeczywistym.
+
+- **Języki:** Polski, Angielski
+- **Integracja:** Microsoft Word
+- **🆕 Tłumaczenie:** Opcjonalne tłumaczenie PL→EN
+- **Czy offline?** ✅ Tak (transkrypcja + tłumaczenie)
+- **Aktywacja:** Lewy Shift (do włączenia/wyłączenia nagrywania)
+
+**Jak użyć:**
+1. Otwórz Microsoft Word
+2. Wybierz "Transkrypcja na żywo"
+3. Kliknij "Włącz tłumaczenie PL→EN" (opcjonalnie)
+4. Wciśnij **Lewy Shift** by zacząć nagrywać
+5. Mów do mikrofonu
+6. Tekst pojawia się w Wordzie
+
+---
+
+### 3️⃣ Tłumaczenie dokumentów
+
+Przetłumacz całe dokumenty z zachowaniem formatowania.
+
+- **Formaty wejścia:** DOCX, PDF
+- **Formaty wyjścia:** DOCX + PDF
+- **Języki:** Polski→ Angielski / Rosyjski / Ukraiński
+- **Czy offline?** ✅ Tak (translate library)
+- **Dodatkowe:** Wsparcie Microsoft Word (COM automation)
+
+**Jak użyć:**
+1. Wybierz "Tłumaczenie dokumentów"
+2. Zaznacz dokument
+3. Wybierz język docelowy
+4. Kliknij "Start tłumaczenia"
+5. Czekaj (progress na dole okna)
+6. Pobierz przetłumaczony dokument (sufiks: `_en`, `_ru`, `_uk`)
+
+---
+
+## 🏗️ Struktura projektu
+
+```
+traskryptor/
+├── main.py                      # Główne menu
+├── gui.py                       # GUI transkrypcji na żywo
+├── audio_file_transcription.py # Transkrypcja z pliku
+├── speech_to_word.py           # Transkrypcja na żywo
+├── transcription_model.py      # Modele AI
+├── translation_gui.py          # GUI tłumaczenia
+├── pdf_translator.py           # Logika tłumaczenia (translate library)
+├── audio_handler.py            # Obsługa mikrofonu
+├── word_handler.py             # Integracja Word (COM)
+├── requirements.txt            # Zależności Python
+└── Traskryptor_WinPython/      # Bundle (1 GB)
+    ├── python/                 # Python 3.13 + pakiety
+    ├── app/                    # Kod aplikacji
+    └── Traskryptor.exe         # Launcher
+```
+
+---
+
+## ⚙️ Wymagania
+
+### Bundle (opcja rekomendowana)
+- Windows 7+
+- 366 MB na dysku (po rozpakowaniu ~1 GB)
+- Mikrofon (dla transkrypcji na żywo)
+- Microsoft Word (opcjonalnie, dla transkrypcji na żywo)
+
+### Instalacja ręczna
+- Python 3.8+ (testowane na 3.13)
+- sounddevice, numpy, librosa, keyboard
+- faster-whisper (transkrypcja)
+- **translate 3.8.0** (tłumaczenie offline - NIE PyTorch)
+- python-docx, pymupdf (dokumenty)
+- pywin32 (integracja Word)
+
+**Wszystkie biblioteki są DARMOWE i OPEN SOURCE** ✅
+
+---
+
+## 🚀 Instalacja zaawansowana
+
+### Pobierz pakiety językowe (tłumaczenie)
+Aby tłumaczenie było szybsze, pobierz pakiety offline:
 
 ```bash
 python install_languages.py
 ```
 
-Ten skrypt pobierze pakiety dla:
-- Polski → Angielski
-- Polski → Rosyjski
-- Polski → Ukraiński
+Pobierze modele dla:
+- 🇵🇱 Polski → 🇬🇧 Angielski
+- 🇵🇱 Polski → 🇷🇺 Rosyjski  
+- 🇵🇱 Polski → 🇺🇦 Ukraiński
 
-Po pobraniu wszystko działa **w pełni offline**.
+Po pobraniu wszystko działa **bez internetu**.
 
-## Rozwiązywanie problemów
+---
 
-### Brak modułu (ModuleNotFoundError)
+## 🐛 Rozwiązywanie problemów
+
+### "ModuleNotFoundError"
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Transkrypcja nie działa
-1. Sprawdź czy mikrofon działa
-2. Sprawdź czy Microsoft Word jest otwarty (dla transkrypcji na żywo)
-3. Upewnij się że modele zostały pobrane (pierwsze uruchomienie wymaga internetu)
+- Sprawdź czy mikrofon działa
+- Sprawdź czy Microsoft Word jest otwarty (transkrypcja na żywo)
+- Pierwsze uruchomienie pobiera modele (wymaga internetu)
 
-### Tłumaczenie się zawiesza
-1. Sprawdź czy Microsoft Word jest zainstalowany
-2. Zamknij wszystkie okna Word przed uruchomieniem
-3. Przy pierwszym użyciu języka sprawdź połączenie z internetem
-4. Zobacz plik `ROZWIAZANIE_PROBLEMU.md` dla szczegółów
+### Tłumaczenie zawiesza się
+- Upewnij się że Microsoft Word jest zainstalowany
+- Zamknij wszystkie okna Word przed uruchomieniem
+- Sprawdź plik `ROZWIAZANIE_PROBLEMU.md`
 
-### Brak pakietów językowych ArgosTranslate
-Uruchom:
+### Brak pakietów tłumaczenia
 ```bash
 python install_languages.py
 ```
 
-## Licencja
+---
 
-Projekt edukacyjny - użyj na własną odpowiedzialność.waga:** Tłumaczenie wymaga zainstalowanego Microsoft Word. Przy pierwszym użyciu języka wymaga internetu (pobiera pakiety ArgosTranslate)
-7. Tekst pojawi się w Wordzie
-8. Kliknij "Zakończ nasłuchiwanie" aby zatrzymać
+## 📄 Dokumentacja
 
-### Tylko tłumaczenie dokumentów
-1. Uruchom: `python main.py` → wybierz "Tłumaczenie dokumentów"
-2. Kliknij "Wybierz plik" i wskaż dokument (.docx, .odt lub .pdf)
-3. Wybierz język docelowy (English / Русский)
-4. Kliknij "Rozpocznij tłumaczenie"
-5. Poczekaj na zakończenie (progres wyświetlany na dole okna)
-6. Przetłumaczone pliki DOCX i PDF zostaną zapisane obok oryginału z sufiksem `_en` lub `_ru`
+- [ROZWIAZANIE_PROBLEMU.md](ROZWIAZANIE_PROBLEMU.md) - Szczegółowe rozwiązania
+- [LICENSES.md](LICENSES.md) - Informacje o licencjach
+- [OFFLINE_MODE.md](OFFLINE_MODE.md) - Tryb offline
 
-**Uwaga:** Tłumaczenie wymaga połączenia z internetem i zainstalowanego Microsoft Word.
+---
 
-## Rozwiązywanie problemów
+## 📜 Licencja
 
-### Tłumaczenie się zawiesza
-1. Sprawdź czy Microsoft Word jest zainstalowany
-2. Zamknij wszystkie okna Word
-3. Sprawdź połączenie z internetem
-4. Zobacz plik `ROZWIAZANIE_PROBLEMU.md` dla szczegółów
+Wszystkie zależności są open source z licencjami permisywnymi:
+- **MIT, Apache 2.0, BSD, ISC, PSF**
+- ✅ Użycie komercyjne - DARMOWE
+- ✅ Dystrybucja - DARMOWE
+- ✅ Modyfikacja - DARMOWE
 
-### Błąd "constants" przy tłumaczeniu
-To zostało naprawione - program używa wartości numerycznych zamiast stałych Word.
+Szczegóły: [LICENSES.md](LICENSES.md)
 
-### Testowanie
-Uruchom diagnostykę:
-```bash
-python test_mini_translate.py   # Test tłumaczenia 3 akapitów
-python test_word_visible.py     # Test Word COM z widocznym oknem
-```
+---
+
+## 🔧 Stack techniczny
+
+| Komponent | Technologia | Licencja |
+|-----------|------------|----------|
+| **Transkrypcja** | faster-whisper (CTranslate2) | MIT |
+| **Tłumaczenie** | translate 3.8.0 | MIT |
+| **Audio** | sounddevice + librosa | MIT/ISC |
+| **Dokumenty** | python-docx + pymupdf | MIT |
+| **Word integration** | pywin32 (COM) | PSF |
+
+---
+
+## 📞 Wsparcie
+
+- 📧 Dokumentacja: `README.md`
+- 🐛 Problemy: `ROZWIAZANIE_PROBLEMU.md`
+- ⚖️ Licencje: `LICENSES.md`
+
+---
+
+## 📌 Notatki
+
+- **Transkrypcja na żywo wymaga:** Microsoft Word (COM automation)
+- **Tłumaczenie działa offline:** dzięki translate library (bez PyTorch)
+- **Bundle to:** Python 3.13 + wszystkie pakiety + aplikacja (przenośny)
+- **Pierwsze uruchomienie:** pobiera modele AI (~1 GB, wymaga internetu)
+
+**Wersja:** 1.1 (z offline translation)  
+**Ostatnia aktualizacja:** styczeń 2026
