@@ -37,29 +37,18 @@ class TranscriptionGUI:
         tk.Radiobutton(self.lang_frame, text="Angielski", variable=self.lang_var, value="angielski",
                       font=("Arial", 13)).pack(anchor='w', padx=50, pady=5)
         
-        # Opcja tłumaczenia
+        # Opcja tłumaczenia na żywo (offline)
         self.translate_frame = tk.Frame(self.root)
         self.translate_frame.pack(pady=15)
         
-        tk.Label(self.translate_frame, text="Automatyczne tłumaczenie:", font=("Arial", 14, "bold")).pack(pady=(0, 5))
+        tk.Label(self.translate_frame, text="Tłumaczenie transkrypcji na żywo:", font=("Arial", 14, "bold")).pack(pady=(0, 5))
         
         self.translate_var = tk.BooleanVar(value=False)
-        tk.Checkbutton(self.translate_frame, text="Włącz tłumaczenie transkrypcji", 
-                      variable=self.translate_var, font=("Arial", 12),
-                      command=self.update_translate_options).pack(anchor='w', padx=50, pady=5)
+        tk.Checkbutton(self.translate_frame, text="Włącz tłumaczenie PL→EN", 
+                      variable=self.translate_var, font=("Arial", 12)).pack(anchor='w', padx=50, pady=5)
         
-        # Wybór języka tłumaczenia (pokazuje się po zaznaczeniu checkboxa)
-        self.translate_lang_frame = tk.Frame(self.translate_frame)
-        
-        tk.Label(self.translate_lang_frame, text="Przetłumacz na:", font=("Arial", 11)).pack(anchor='w', padx=70, pady=(5, 0))
-        
-        self.translate_lang_var = tk.StringVar(value="en")
-        tk.Radiobutton(self.translate_lang_frame, text="Angielski", variable=self.translate_lang_var, 
-                      value="en", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
-        tk.Radiobutton(self.translate_lang_frame, text="Rosyjski", variable=self.translate_lang_var, 
-                      value="ru", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
-        tk.Radiobutton(self.translate_lang_frame, text="Ukraiński", variable=self.translate_lang_var, 
-                      value="uk", font=("Arial", 11)).pack(anchor='w', padx=90, pady=2)
+        tk.Label(self.translate_frame, text="💡 Tłumaczenie działa offline (po załadowaniu modelu)", 
+                font=("Arial", 9), fg="blue").pack(pady=5)
         
         # Przyciski - zawsze na dole
         self.button_frame = tk.Frame(self.root)
@@ -93,18 +82,11 @@ class TranscriptionGUI:
                                      font=("Arial", 11), fg="gray")
         self.status_label.pack(side=tk.BOTTOM, pady=(0, 10))
     
-    def update_translate_options(self):
-        """Pokazuje/ukrywa opcje języka tłumaczenia"""
-        if self.translate_var.get():
-            self.translate_lang_frame.pack(pady=5)
-        else:
-            self.translate_lang_frame.pack_forget()
-    
     def _on_start_clicked(self):
         """Obsługa kliknięcia przycisku Start"""
         self.selected_language = self.lang_var.get()
         self.translate_enabled = self.translate_var.get()
-        self.translate_lang = self.translate_lang_var.get() if self.translate_enabled else None
+        self.translate_lang = "en" if self.translate_enabled else None
         self.is_running = True
         self.should_stop = False
         
@@ -113,7 +95,7 @@ class TranscriptionGUI:
         
         status_text = "Ładowanie modelu..."
         if self.translate_enabled:
-            status_text += f" + translator ({self.translate_lang.upper()})"
+            status_text += " + translator (pobieranie przy pierwszym użyciu)"
         self.update_status(status_text, "orange")
         
         # Uruchom transkrypcję w osobnym wątku

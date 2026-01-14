@@ -2,6 +2,9 @@
 Główna aplikacja - wybór między transkrypcją a tłumaczeniem
 """
 import tkinter as tk
+from tkinter import messagebox
+import traceback
+import sys
 
 
 class MainApp:
@@ -61,10 +64,10 @@ class MainApp:
         )
         transcription_btn.pack(pady=10)
         
-        # Przycisk tłumaczenia
+        # Przycisk tłumaczenia PDF/Word
         translation_btn = tk.Button(
             button_frame,
-            text=" Tłumaczenie dokumentów\n(Polski/Angielski/Rosyjski/Ukraiński)",
+            text="📄 Tłumaczenie dokumentów\n(Word/PDF → Polski/Angielski)",
             command=self.open_translation,
             font=("Arial", 13, "bold"),
             bg="#2196F3",
@@ -74,6 +77,15 @@ class MainApp:
             cursor="hand2"
         )
         translation_btn.pack(pady=10)
+        
+        # Informacja o offline
+        info_label = tk.Label(
+            button_frame,
+            text="💡 Tłumaczenie działa offline po pierwszym pobraniu modeli",
+            font=("Arial", 9),
+            fg="gray"
+        )
+        info_label.pack(pady=5)
         
         # Przycisk wyjścia
         exit_btn = tk.Button(
@@ -90,31 +102,40 @@ class MainApp:
     
     def open_audio_file_transcription(self):
         """Otwiera moduł transkrypcji z pliku audio"""
-        self.root.destroy()
-        from audio_file_transcription import AudioFileTranscriptionGUI
-        
-        gui = AudioFileTranscriptionGUI()
-        gui.run()
+        try:
+            self.root.destroy()
+            from audio_file_transcription import AudioFileTranscriptionGUI
+            
+            gui = AudioFileTranscriptionGUI()
+            gui.run()
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Nie udało się uruchomić transkrypcji z pliku:\n{str(e)}\n\n{traceback.format_exc()}")
     
     def open_transcription(self):
         """Otwiera moduł transkrypcji na żywo"""
-        self.root.destroy()
-        from gui import TranscriptionGUI
-        from speech_to_word import run_transcription
-        
-        gui = TranscriptionGUI(
-            on_start_callback=run_transcription,
-            on_stop_callback=None
-        )
-        gui.run()
+        try:
+            self.root.destroy()
+            from gui import TranscriptionGUI
+            from speech_to_word import run_transcription
+            
+            gui = TranscriptionGUI(
+                on_start_callback=run_transcription,
+                on_stop_callback=None
+            )
+            gui.run()
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Nie udało się uruchomić transkrypcji na żywo:\n{str(e)}\n\n{traceback.format_exc()}")
     
     def open_translation(self):
         """Otwiera moduł tłumaczenia"""
-        self.root.destroy()
-        from translation_gui import TranslationGUI
-        
-        gui = TranslationGUI()
-        gui.run()
+        try:
+            self.root.destroy()
+            from translation_gui import TranslationGUI
+            
+            gui = TranslationGUI()
+            gui.run()
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Nie udało się uruchomić modułu tłumaczenia:\n{str(e)}\n\n{traceback.format_exc()}")
     
     def run(self):
         """Uruchamia aplikację"""
@@ -122,5 +143,8 @@ class MainApp:
 
 
 if __name__ == "__main__":
-    app = MainApp()
-    app.run()
+    try:
+        app = MainApp()
+        app.run()
+    except Exception as e:
+        messagebox.showerror("Błąd krytyczny", f"Aplikacja napotkała nieoczekiwany błąd:\n{str(e)}\n\n{traceback.format_exc()}")

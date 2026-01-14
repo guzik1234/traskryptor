@@ -35,7 +35,7 @@ class AudioHandler:
         except queue.Empty:
             return np.zeros((self.chunk, 1), dtype=np.int16)
     
-    def process_audio(self, frames, boost=1.8):
+    def process_audio(self, frames, boost=50.0):
         """Przetwarza surowe dane audio do formatu numpy"""
         # frames to lista numpy arrays - konkatenujemy
         audio_np = np.concatenate(frames).flatten().astype(np.float32)

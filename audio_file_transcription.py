@@ -11,7 +11,14 @@ import wave
 import librosa
 from transcription_model import TranscriptionModel
 from docx import Document
-from docx2pdf import convert
+
+# Import opcjonalny - jeśli nie ma docx2pdf, będziemy tylko zapisywać DOCX
+try:
+    from docx2pdf import convert
+    DOCX2PDF_AVAILABLE = True
+except ImportError:
+    DOCX2PDF_AVAILABLE = False
+    print("Ostrzeżenie: docx2pdf niedostępny. Tylko DOCX będzie dostępny.")
 
 
 class AudioFileTranscriptionGUI:
@@ -238,15 +245,18 @@ class AudioFileTranscriptionGUI:
         doc.add_paragraph(transcription)
         doc.save(docx_path)
         
-        # Konwertuj do PDF
-        try:
-            convert(docx_path, pdf_path)
-        except Exception as e:
-            print(f"Ostrzeżenie: Nie udało się utworzyć PDF: {e}")
-            # Kontynuuj mimo błędu - przynajmniej DOCX zostanie zapisany
-        
         self.output_docx = docx_path
-        self.output_pdf = pdf_path
+        
+        # Konwertuj do PDF tylko jeśli docx2pdf jest dostępny
+        if DOCX2PDF_AVAILABLE:
+            try:
+                convert(docx_path, pdf_path)
+                self.output_pdf = pdf_path
+            except Exception as e:
+                print(f"Ostrzeżenie: Nie udało się utworzyć PDF: {e}")
+                # Kontynuuj mimo błędu - przynajmniej DOCX zostanie zapisany
+        else:
+            print("Pominięcie konwersji do PDF - docx2pdf niedostępny")
     
     def on_success(self):
         """Wywoływane po udanej transkrypcji"""

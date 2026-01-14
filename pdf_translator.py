@@ -1,117 +1,66 @@
-﻿import fitz  # PyMuPDF
-import os
+﻿import os
 import re
 import subprocess
 
-# Tryb offline – jeśli True używamy Argos Translate zamiast usług online.
-# Tryb offline (bez połączeń z Internetem). Jeśli True używamy Argos Translate / HF NLLB fallback.
+# PyMuPDF - importowane tylko gdy potrzebne dla PDF
+try:
+    import fitz
+    FITZ_AVAILABLE = True
+except ImportError:
+    FITZ_AVAILABLE = False
+    fitz = None
+
+# Offline tłumaczenie - prostą bibliotekę translate
 USE_OFFLINE = True
+TRANSLATOR_AVAILABLE = False
 
-_offline_available = False
-_hf_available = False
-_argos_pairs = set()
-
-if USE_OFFLINE:
-    # Argos init + pary
-    try:
-        import argostranslate.translate as argos_translate
-        _offline_available = True
-        try:
-            installed_langs = argos_translate.get_installed_languages()
-            for src in installed_langs:
-                for tgt in installed_langs:
-                    _argos_pairs.add((src.code, tgt.code))
-        except Exception:
-            pass
-    except ImportError:
-        print("[OFFLINE] Brak pakietu argostranslate. Użyj: pip install argostranslate")
-    # HF transformers fallback
-    try:
-        from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-        import torch
-        _hf_available = True
-    except ImportError:
-        print("[FALLBACK] Brak transformers. Zainstaluj: pip install transformers")
-else:
-    try:
-        from deep_translator import GoogleTranslator
-    except ImportError:
-        GoogleTranslator = None
-        print("[ONLINE] deep_translator niedostępny.")
+try:
+    from translate import Translator
+    TRANSLATOR_AVAILABLE = True
+    print("[OFFLINE] Translator dostępny - tłumaczenie offline")
+except ImportError as e:
+    print(f"[ERROR] Brak translate: {e}")
 
 
 class PDFTranslator:
-    """Tłumaczy dokumenty (Word/PDF) z polskiego na en/ru/uk.
-    Priorytet: Argos offline -> HF NLLB fallback (ru/uk) -> Google online.
+    """Tłumaczy teksty offline używając biblioteki translate.
+    Obsługuje: PL->EN, EN->PL (offline bez internetu).
     """
-    _hf_models = {}  # cache załadowanych modeli HF
-
+    
     def __init__(self, source_lang="pl", target_lang="en"):
         self.source_lang = source_lang
         self.target_lang = target_lang
-        if USE_OFFLINE:
-            if _offline_available and (source_lang, target_lang) in _argos_pairs:
-                print(f"[OFFLINE/ARGOS] {source_lang}->{target_lang}")
-            elif target_lang in {"ru", "uk"} and _hf_available:
-                print(f"[OFFLINE/FALLBACK HF] Ładowanie modelu NLLB dla {source_lang}->{target_lang}")
-                self._load_hf_model(source_lang, target_lang)
-            else:
-                print(f"[OFFLINE WARN] Brak pary Argos i brak fallback dla {source_lang}->{target_lang}")
+        self.translator = None
+        
+        if TRANSLATOR_AVAILABLE:
+            try:
+                # Mapa kodów języków
+                lang_map = {"pl": "pl", "en": "en", "ru": "ru", "uk": "uk"}
+                src = lang_map.get(source_lang, source_lang)
+                tgt = lang_map.get(target_lang, target_lang)
+                
+                self.translator = Translator(from_lang=src, to_lang=tgt)
+                print(f"[TRANSLATOR] Translator {src}->{tgt} załadowany (offline)")
+            except Exception as e:
+                print(f"[TRANSLATOR ERROR] {e}")
+                print("[FALLBACK] Tłumaczenie niedostępne")
         else:
-            if "GoogleTranslator" in globals() and GoogleTranslator:
-                self.translator = GoogleTranslator(source=source_lang, target=target_lang)
-                print(f"[ONLINE] GoogleTranslator: {source_lang} -> {target_lang}")
-            else:
-                print("[ERROR] Brak GoogleTranslator.")
-
-    def _load_hf_model(self, src, tgt):
-        pair = (src, tgt)
-        if pair in self._hf_models:
-            return
-        model_name = "facebook/nllb-200-distilled-600M"
-        try:
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-            lang_map = {"pl": "pol_Latn", "en": "eng_Latn", "ru": "rus_Cyrl", "uk": "ukr_Cyrl"}
-            self._hf_models[pair] = (tokenizer, model, lang_map.get(src), lang_map.get(tgt))
-            print(f"[HF/NLLB] Załadowano {model_name} dla {src}->{tgt}")
-        except Exception as e:
-            print(f"[HF ERR] Nie udało się załadować {model_name}: {e}")
-
-    def _hf_translate(self, text):
-        pair = (self.source_lang, self.target_lang)
-        if pair not in self._hf_models:
-            return text
-        tokenizer, model, src_lang, tgt_lang = self._hf_models[pair]
-        try:
-            tokenizer.src_lang = src_lang
-            inputs = tokenizer(text, return_tensors="pt", truncation=True)
-            forced_bos = tokenizer.convert_tokens_to_ids(tgt_lang)
-            with torch.no_grad():
-                outputs = model.generate(**inputs, forced_bos_token_id=forced_bos, max_length=512)
-            return tokenizer.decode(outputs[0], skip_special_tokens=True)
-        except Exception as e:
-            print(f"[HF GEN ERR] {e}")
-            return text
-
+            print("[WARNING] Translator niedostępny")
+    
     def _translate(self, text: str) -> str:
+        """Tłumaczy tekst używając translate"""
         if not text or not text.strip():
             return text
-        if USE_OFFLINE:
-            if _offline_available and (self.source_lang, self.target_lang) in _argos_pairs:
-                try:
-                    return argos_translate.translate(text, self.source_lang, self.target_lang)
-                except Exception as e:
-                    print(f"[ARGOS ERR] {e}")
-            if self.target_lang in {"ru", "uk"} and _hf_available:
-                return self._hf_translate(text)
+        
+        if not self.translator:
             return text
-        if hasattr(self, "translator"):
-            try:
-                return self.translator.translate(text)
-            except Exception as e:
-                print(f"[ONLINE ERR] {e}")
-        return text
+        
+        try:
+            translated = self.translator.translate(text)
+            return translated if translated else text
+        except Exception as e:
+            print(f"[TRANSLATE ERROR] {e}")
+            return text
 
     def open_in_word(self, input_path):
         """Otwiera dokument w Microsoft Word (bez tłumaczenia)"""
@@ -139,11 +88,15 @@ class PDFTranslator:
             return False
     
     def translate_text(self, text):
+        """Publiczna metoda do tłumaczenia tekstu (używana w speech_to_word)"""
         if not text or not text.strip():
             return text
-        print(f"Tłumaczenie: {text[:50]}...")
+        
+        if not self.translator:
+            print(f"[WARNING] Brak translatora - zwracam oryginalny tekst")
+            return text
+        
         translated = self._translate(text)
-        print(f"Wynik: {translated[:50] if translated else 'BRAK'}...")
         return translated if translated else text
     
     def translate_pdf(self, input_path, output_path, progress_callback=None):

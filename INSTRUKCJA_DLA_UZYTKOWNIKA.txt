@@ -1,0 +1,86 @@
+# 📦 INSTRUKCJA DLA UŻYTKOWNIKA
+
+## JAK URUCHOMIĆ TRASKRYPTOR
+
+### 1️⃣ Pobierz paczkę
+- Pobierz plik: **Traskryptor_FINAL_READY.zip** (642 MB)
+
+### 2️⃣ Rozpakuj
+- Kliknij prawym przyciskiem na plik ZIP
+- Wybierz "Wyodrębnij wszystko..." lub "Extract All..."
+- Wybierz lokalizację (np. Pulpit lub Dokumenty)
+
+### 3️⃣ Uruchom
+- Wejdź do wypakowanego folderu `Traskryptor_FINAL_READY`
+- Kliknij dwukrotnie: **Uruchom_Traskryptor.bat**
+
+---
+
+## ✅ CO JEST W PACZCE?
+
+- Python 3.12 (wbudowany, nie musisz instalować)
+- PyTorch 2.9.1 CPU (uczenie maszynowe)
+- OpenAI Whisper (rozpoznawanie mowy)
+- PyAudio (nagrywanie audio)
+- Wszystkie biblioteki (pywin32, argostranslate, pymupdf, etc.)
+- Gotowa aplikacja Traskryptor
+
+**WSZYSTKIE FUNKCJE PRZETESTOWANE:**
+✅ PyAudio - nagrywanie z mikrofonu
+✅ Tkinter - interfejs graficzny
+✅ Whisper - transkrypcja mowy
+✅ PyTorch - model AI
+✅ win32com - integracja z Microsoft Word
+✅ PyMuPDF - obsługa plików PDF
+✅ Argos Translate - tłumaczenie offline
+✅ Wszystkie moduły aplikacji
+
+---
+
+## ❗ WAŻNE
+
+- **NIE MUSISZ** instalować Pythona
+- **NIE MUSISZ** instalować żadnych bibliotek
+- **NIE POTRZEBUJESZ** internetu do uruchomienia
+- Wszystko jest w paczce!
+
+---
+
+## 🖥️ WYMAGANIA SYSTEMOWE
+
+- Windows 10/11 (64-bit)
+- ~2 GB wolnego miejsca na dysku
+- Mikrofon (do transkrypcji na żywo)
+- Microsoft Word (do zapisywania transkrypcji)
+
+---
+
+## 🎯 CO POTRAFI TRASKRYPTOR?
+
+1. **Transkrypcja na żywo** - Mów do mikrofonu, tekst pojawia się w Word
+2. **Tłumaczenie** - Automatyczne tłumaczenie podczas mówienia
+3. **Transkrypcja plików audio** - Zamień nagrania na tekst
+4. **Tłumaczenie PDF** - Przetłumacz dokumenty PDF
+
+---
+
+## 🆘 PROBLEMY?
+
+### Aplikacja się nie uruchamia?
+- Sprawdź czy wypakowano CAŁY folder
+- Uruchom ponownie: `Uruchom_Traskryptor.bat`
+
+### Nie działa mikrofon?
+- Sprawdź ustawienia mikrofonu w Windows
+- Daj aplikacji uprawnienia do mikrofonu
+
+### Inne problemy?
+- Uruchom `Uruchom_Traskryptor.bat` w terminalu
+- Zobacz co pokazuje komunikat o błędzie
+
+---
+
+## 📝 LICENCJA I INFORMACJE
+
+To jest pełna, przenośna wersja Traskryptor.
+Wszystkie biblioteki i zależności są zawarte w paczce.
