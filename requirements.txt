@@ -2,9 +2,8 @@
 sounddevice==0.5.3
 librosa
 
-# Speech recognition
+# Speech recognition - faster-whisper (CTranslate2, NO PyTorch!)
 SpeechRecognition==3.14.4
-openai-whisper
 faster-whisper==1.2.1
 
 # Input handling
@@ -13,15 +12,11 @@ keyboard==0.13.5
 # Windows COM automation
 pywin32==311
 
-# AI/ML
-numpy
-torch
-transformers
-sentencepiece
-
-# Translation (offline capable)
-argostranslate==1.9.6
+# Translation - OFFLINE (translate library, NO PyTorch!)
+translate==3.8.0
+libretranslatepy==2.1.1
 
 # Document handling
 python-docx
+pymupdf
 docx2pdf
