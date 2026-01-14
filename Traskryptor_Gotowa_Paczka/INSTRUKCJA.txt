@@ -1,0 +1,74 @@
+╔══════════════════════════════════════════════════════════════╗
+║                    TRASKRYPTOR                               ║
+║         Transkrypcja na żywo z tłumaczeniem                  ║
+╚══════════════════════════════════════════════════════════════╝
+
+📖 JAK URUCHOMIĆ:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Rozpakuj CAŁY folder (NIE uruchamiaj z archiwum ZIP!)
+
+2. Kliknij dwukrotnie na plik:
+   👉 URUCHOM_TRASKRYPTOR.bat
+
+3. Poczekaj na załadowanie (pierwsze uruchomienie może 
+   trwać dłużej - ładuje modele AI)
+
+4. Wybierz opcję z menu głównego
+
+
+✨ FUNKCJE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• Transkrypcja na żywo z mikrof. + tłumaczenie do MS Word
+• Transkrypcja z pliku audio
+• Tłumaczenie dokumentów PDF
+
+
+⚙️ WYMAGANIA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Windows 10/11
+✅ Microsoft Word (do transkrypcji na żywo)
+✅ Minimum 5 GB wolnego miejsca na dysku
+✅ Mikrofon (do transkrypcji na żywo)
+
+
+⚠️ UWAGI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+• NIE przenoś plików z folderu - program wymaga 
+  kompletnej struktury
+
+• Pierwsze uruchomienie pobierze modele AI (około 1-2 GB)
+  - wymaga połączenia z internetem
+
+• Folder .venv zawiera Python i wszystkie biblioteki
+  - NIE usuwaj go!
+
+
+📁 ROZMIAR PACZKI:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Około 2-3 GB (zawiera PyTorch i modele Whisper)
+
+
+🐛 PROBLEMY?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Upewnij się że:
+   - Cały folder jest rozpakowany
+   - Antywirus nie blokuje plików
+   - Masz wystarczająco miejsca na dysku
+
+2. Jeśli występują błędy:
+   - Zamknij program
+   - Usuń folder .cache (jeśli istnieje)
+   - Uruchom ponownie
+
+
+═══════════════════════════════════════════════════════════════
+
+        Gotowe! Miłego użytkowania! 🎉
+
+═══════════════════════════════════════════════════════════════
